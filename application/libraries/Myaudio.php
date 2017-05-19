@@ -21,6 +21,11 @@ class Myaudio {
         }else{
             $is_conn = false; //action in connection failure
         }
+        
+        //[LLX]:checking if it's running under Ubuntu/LliureX, so, it's not "online at all" (Can't access online voices)
+        if (preg_match('/jocomunico:800/i', base_url())) $is_conn=false;
+        //[END LLX]
+        
         return $is_conn;
     }
     
@@ -30,6 +35,7 @@ class Myaudio {
     public function AppLocalOrServer()
     {
         if (preg_match('/localhost/i', base_url())) return "local";
+        else if (preg_match('/jocomunico:800/i', base_url())) return "local"; // [LLX]: Uf it's on jocomunico:800, it's local too
         else return "server";
     }
     
@@ -92,7 +98,16 @@ class Myaudio {
         $errormessage = null;
         
         switch ($user_agent) {
-                
+
+            // [LLX]: Getting local Voices for Linux (needs some work for lliurex-tts)
+            case "Linux":
+            case "Ubuntu":
+                $voices=["en", "de", "es", "fr", "it", "ca"];
+                $error=false;
+                break;
+            // [END LLX]
+
+            
             case "Mac OS X":
                     
                 try {
@@ -555,6 +570,25 @@ class Myaudio {
                     
                     break;
 
+                // [LLX]: Manages call to syntesizeLliureX
+                case "Linux":
+                case "Ubuntu":
+                    // Prepared for LliureX OS. Depends on lliurex-tts package.
+                    // it can be found on ppa:llxdev/xenial
+                    
+                    $auxresponse = $this->synthesizeLliureX($voice, $text, $md5, $rate);
+                    
+                    //if there was an error
+                    if ($auxresponse[0]) {
+                        $error = true;
+                        $errormessage = $auxresponse[1];
+                        $errorcode = $auxresponse[2];
+                    }
+                    
+                    break;
+                // [LLX] End Managing call to syntesizeLliureX 
+
+                    
                 default:
                     $error = true;
                     $errormessage = "Error. Your OS is not compatible with offline voices. "
@@ -663,6 +697,8 @@ class Myaudio {
      * @return array $output calling function should check for returned errors in $output[0],
      * errormessage in $output[1] errorcode in $output[2]
      */
+    
+    
     function synthesizeMacOSX($voice, $text, $filename, $rate)
     {        
         $error = false;
@@ -827,6 +863,29 @@ class Myaudio {
         $output[2] = $errorcode;
         return $output;
     }
+    
+    
+    
+    // [LLX]: Function syntesizeLliureX
+    /*
+    * Invokes system simple-google-tts command from lliurex-tts package
+    */
+    function synthesizeLliureX($voice, $text, $filename, $rate){
+        
+         /// Assuming DocumentRoot is in /var/www/html (most in Ubuntu, but not in lliureX -we'll create a link- )
+         $apachepath="/var/www/html/jocomunico/mp3/";
+            
+         // Catalan voice is better in local Festival than in Google...
+         $forceFestival=" "; 
+         if ($voice=="ca") $forceFestival=" -p ";
+         
+         $output=shell_exec('simple-google-tts'.$forceFestival.'-s -w '.$apachepath.$filename.'.mp3 '.$voice.' "'.$text.'"');
+         return $output;
+    }
+    // [LLX END] SyntesizeLliureX function
+    
+    
+    
     
     /**
      * 
