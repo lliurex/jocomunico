@@ -78,8 +78,7 @@ $db['default'] = array(
 	'hostname' => 'localhost',
 	'username' => 'root',
 	'password' => 'root',
-	//'database' => 'jocomunicoapp',
-    'database' => 'jocomunico-lliureX', //[LLX]: Access to LliureX Database (just for test, can be jocomunicoapp)
+	'database' => 'jocomunico-lliureX',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
@@ -95,3 +94,4 @@ $db['default'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+

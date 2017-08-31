@@ -24,7 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 //$config['base_url'] = 'http://localhost/';
-$config['base_url'] = 'http://jocomunico:800'; // [LLX]: LliureX Port for apache with php5 
+$config['base_url'] = 'http://jocomunico'; // [LLX]: LliureX Port
 
 /*
 |--------------------------------------------------------------------------

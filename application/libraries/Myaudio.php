@@ -23,7 +23,7 @@ class Myaudio {
         }
         
         //[LLX]:checking if it's running under Ubuntu/LliureX, so, it's not "online at all" (Can't access online voices)
-        if (preg_match('/jocomunico:800/i', base_url())) $is_conn=false;
+        if (preg_match('/jocomunico/i', base_url())) $is_conn=false;
         //[END LLX]
         
         return $is_conn;
@@ -35,7 +35,7 @@ class Myaudio {
     public function AppLocalOrServer()
     {
         if (preg_match('/localhost/i', base_url())) return "local";
-        else if (preg_match('/jocomunico:800/i', base_url())) return "local"; // [LLX]: Uf it's on jocomunico:800, it's local too
+        else if (preg_match('/jocomunico/i', base_url())) return "local"; // [LLX]: Uf it's on jocomunico, it's local too
         else return "server";
     }
     
